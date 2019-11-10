@@ -209,15 +209,16 @@ def update(n_intervals):
     ethgasStation_dict['standard'] = ethgasStation_dict['average']
     del ethgasStation_dict['average']
     print(ethgasStation_dict)
-    print(list(api.keys()))
     del api["blockNum"]
-
+    ethgasStation = [x / 10 for x in list(ethgasStation_dict.values())]
+    print(ethgasStation)
+    ethgasStation[-2] = ethgasStation[-2]*10
     trace1 = go.Bar(x=list(api.keys()),
                 y=list(api.values()),
                 name='Squid Predict',
                 )
     trace2 = go.Bar(x=list(ethgasStation_dict.keys()),
-            y=list(ethgasStation_dict.values()),
+            y=ethgasStation,
             name='Eth Gas Predict',
             )
     data = [trace1,trace2]
@@ -225,4 +226,4 @@ def update(n_intervals):
 
 # Main
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False)

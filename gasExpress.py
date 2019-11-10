@@ -232,7 +232,7 @@ def ml_methods(alltx, block_time, block):
         if hpa < 100:
             prob =100 - hpa
             
-            return math.log(0.05)//math.log(prob/100)
+            return math.log(0.05)/math.log(prob/100)
             
         return 1
 
@@ -244,16 +244,23 @@ def ml_methods(alltx, block_time, block):
 
     return results, score
 
-def make_ml_predictions_table(results):
+def make_ml_predictions_table(results,block_time, block):
     # print(results)
     df = pd.DataFrame(results, columns=['gas_price', 'blocks'])
-    print(df)
-    df = df.groupby(['blocks'], as_index=False).agg({'gas_price': 'min'})
-    print(df)
-    predictions = df
-    fastest = df['gas_price'].iget(-1)
-    fastest = df.iloc
-    return predictions 
+    df = df.groupby(['blocks'], as_index=False).agg({'gas_price': 'min'}).sort_values('blocks',ascending = False)
+
+    safe =df[df['blocks'] < 25]['gas_price'].min()+ 1
+    standard = df[df['blocks'] < 5]['gas_price'].min() + 1
+    fast = df[df['blocks'] < 1]['gas_price'].min()+1
+    fastest = df[df['blocks'] < 1]['gas_price'].min()+1
+    gprecs = {}
+    gprecs['safeLow'] = int(safe)
+    gprecs['standard'] = int(standard)
+    gprecs['fast'] = int(fast)
+    gprecs['fastest'] = int(fastest)
+    gprecs['block_time'] = int(block_time)
+    gprecs['blockNum'] = int(block)
+    return gprecs
 
 
 def master_control():
@@ -304,7 +311,7 @@ def master_control():
             #get gpRecs
             gprecs = get_gasprice_recs (predictiondf, block_time, block)
             # print(gprecs)
-
+            gprecs = json.dumps(gprecs)
             ###get max block and filter blocks < maxblock - 200 alltx = alltx[alltx.blocknumber > alltx.blocknumber.max()-200]
             # print(alltx)
 
@@ -312,7 +319,7 @@ def master_control():
             ####call these first before predictiondf because that doesn't need to be called unlese these predictions are bad
             ml_prediction_df, score = ml_methods(alltx, block_time, block)
             print(score)
-            results = make_ml_predictions_table(ml_prediction_df)
+            gprecs = make_ml_predictions_table(ml_prediction_df,block_time,block)
 
             ####make the if else statment in order to choose which model to write to the user
             # df = pd.DataFrame('data', columns=['gwei',''])
