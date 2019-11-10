@@ -4,6 +4,8 @@ import copy
 import pathlib
 import dash
 import math
+import time
+import json
 import datetime as dt
 import pandas as pd
 from dash.dependencies import Input, Output, State, ClientsideFunction
@@ -28,7 +30,7 @@ server = app.server
 # Load data
 df = pd.read_csv(DATA_PATH.joinpath("alltx.csv"), low_memory=False)
 
-# Create global chart template
+
 
 # Create app layout
 app.layout = html.Div(
@@ -87,34 +89,40 @@ app.layout = html.Div(
                         html.Div(
                             [
                                 html.Div(
-                                    [html.H6(id="Dangerously"), html.P("Dangerously")],
+                                    [dcc.Interval(id='interval1', interval=5 * 1000, n_intervals=5),
+                                    html.H6(id="Block Number"), html.P("Block Number")],
                                     id="dangerously",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="Dangerously Safe"), html.P("Dangerously Safe")],
-                                    id="dangerously safe",
+                                    [dcc.Interval(id='interval2', interval=5 * 1000, n_intervals=5),
+                                    html.H6(id="Safe"), html.P("Safe")],
+                                    id="safe",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="well_text"), html.P("Safe")],
-                                    id="wells",
+                                    [dcc.Interval(id='interval3', interval=5 * 1000, n_intervals=5),
+                                    html.H6(id="Standard"), html.P("Standard")],
+                                    id="standard",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="gasText"), html.P("Standard")],
-                                    id="gas",
+                                    [dcc.Interval(id='interval4', interval=5 * 1000, n_intervals=5),
+                                    html.H6(id="Fast"), html.P("Fast")],
+                                    id="fast",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="oilText"), html.P("Fast")],
-                                    id="oil",
-                                    className="mini_container",
+                                    [dcc.Interval(id='interval5', interval=5 * 1000, n_intervals=5),
+                                    html.H6(id="Fastest"), html.P("Fastest")],
+                                    id="fastest",
+                                    # className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="waterText"), html.P("Very Fast")],
-                                    id="water",
-                                    className="mini_container",
+                                    [dcc.Interval(id='interval6', interval=5 * 1000, n_intervals=5),
+                                    html.H6(id="Very Fast"), html.P("Very Fast")],
+                                    id="very fast",
+                                    # className="mini_container",
                                 ),
                             ],
                             id="info-container",
@@ -135,6 +143,48 @@ app.layout = html.Div(
     id="mainContainer",
     style={"display": "flex", "flex-direction": "column"},
 )
+
+@app.callback(dash.dependencies.Output('Block Number', 'children'),
+    [dash.dependencies.Input('interval1', 'n_intervals')])
+def update(n_intervals):
+    with open('ethgasAPI.json') as f:
+        api = json.load(f)
+        print(api)  
+    return api['blockNum']
+
+@app.callback(dash.dependencies.Output('Safe', 'children'),
+    [dash.dependencies.Input('interval2', 'n_intervals')])
+def update(n_intervals):
+    with open('ethgasAPI.json') as f:
+        api = json.load(f)
+        print(api)  
+    return api['safeLow']
+
+
+@app.callback(dash.dependencies.Output('Standard', 'children'),
+    [dash.dependencies.Input('interval3', 'n_intervals')])
+def update(n_intervals):
+    with open('ethgasAPI.json') as f:
+        api = json.load(f)
+        print(api)  
+    return api['standard']
+
+@app.callback(dash.dependencies.Output('Fast', 'children'),
+    [dash.dependencies.Input('interval4', 'n_intervals')])
+def update(n_intervals):
+    with open('ethgasAPI.json') as f:
+        api = json.load(f)
+        print(api)  
+    return api['fast']
+
+@app.callback(dash.dependencies.Output('Fastest', 'children'),
+    [dash.dependencies.Input('interval5', 'n_intervals')])
+def update(n_intervals):
+    with open('ethgasAPI.json') as f:
+        api = json.load(f)
+        print(api)  
+    return api['fastest']
+
 
 # Main
 if __name__ == "__main__":
