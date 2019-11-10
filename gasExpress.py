@@ -293,14 +293,20 @@ def master_control():
             gprecs = get_gasprice_recs (predictiondf, block_time, block)
             # print(gprecs)
 
+            ###get max block and filter blocks < maxblock - 200 alltx = alltx[alltx.blocknumber > alltx.blocknumber.max()-200]
+            # print(alltx)
 
             #####
             ####call these first before predictiondf because that doesn't need to be called unlese these predictions are bad
             ml_prediction_df, score = ml_methods(alltx, block_time, block)
             print(ml_prediction_df)
             print(score)
-            make_ml_predictionTable =
-            df = pd.DataFrame(data, columns=['gwei',''])
+            make_ml_predictionTable =''
+
+            ####make the if else statment in order to choose which model to write to the user
+            # df = pd.DataFrame('data', columns=['gwei',''])
+
+
             #every block, write gprecs, predictions    
             write_to_json(gprecs, predictiondf,alltx)
             return True

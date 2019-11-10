@@ -8,6 +8,7 @@ import time
 import json
 import datetime as dt
 import pandas as pd
+import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
@@ -89,40 +90,40 @@ app.layout = html.Div(
                         html.Div(
                             [
                                 html.Div(
-                                    [dcc.Interval(id='interval1', interval=5 * 1000, n_intervals=5),
+                                    [dcc.Interval(id='interval1', interval=3 * 1000, n_intervals=0),
                                     html.H6(id="Block Number"), html.P("Block Number")],
                                     id="dangerously",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [dcc.Interval(id='interval2', interval=5 * 1000, n_intervals=5),
+                                    [dcc.Interval(id='interval2', interval=3 * 1000, n_intervals=0),
                                     html.H6(id="Safe"), html.P("Safe")],
                                     id="safe",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [dcc.Interval(id='interval3', interval=5 * 1000, n_intervals=5),
+                                    [dcc.Interval(id='interval3', interval=3 * 1000, n_intervals=0),
                                     html.H6(id="Standard"), html.P("Standard")],
                                     id="standard",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [dcc.Interval(id='interval4', interval=5 * 1000, n_intervals=5),
+                                    [dcc.Interval(id='interval4', interval=3 * 1000, n_intervals=0),
                                     html.H6(id="Fast"), html.P("Fast")],
                                     id="fast",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [dcc.Interval(id='interval5', interval=5 * 1000, n_intervals=5),
+                                    [dcc.Interval(id='interval5', interval=3 * 1000, n_intervals=0),
                                     html.H6(id="Fastest"), html.P("Fastest")],
                                     id="fastest",
-                                    # className="mini_container",
+                                    className="mini_container",
                                 ),
                                 html.Div(
-                                    [dcc.Interval(id='interval6', interval=5 * 1000, n_intervals=5),
+                                    [dcc.Interval(id='interval6', interval=3 * 1000, n_intervals=0),
                                     html.H6(id="Very Fast"), html.P("Very Fast")],
                                     id="very fast",
-                                    # className="mini_container",
+                                    className="mini_container",
                                 ),
                             ],
                             id="info-container",
@@ -133,15 +134,18 @@ app.layout = html.Div(
         html.Div(
             [
                 html.Div(
-                    [dcc.Graph(id="main_graph")],
-                    className="pretty_container",
+
+                    [
+                    html.H3('History of Gas Usage in Last 200 Blocks'),
+                    dcc.Graph(id="main-graph"),
+                    dcc.Interval(id='graph-update',interval=3 * 1000, n_intervals=0)],
+                    className=" pretty_container",
                 ),
             ],
-            #className="row flex-display",
         ),
     ],
-    id="mainContainer",
-    style={"display": "flex", "flex-direction": "column"},
+    # id="mainContainer",
+    # style={"display": "flex", "flex-direction": "column"},
 )
 
 @app.callback(dash.dependencies.Output('Block Number', 'children'),
@@ -149,7 +153,6 @@ app.layout = html.Div(
 def update(n_intervals):
     with open('ethgasAPI.json') as f:
         api = json.load(f)
-        print(api)  
     return api['blockNum']
 
 @app.callback(dash.dependencies.Output('Safe', 'children'),
@@ -157,7 +160,6 @@ def update(n_intervals):
 def update(n_intervals):
     with open('ethgasAPI.json') as f:
         api = json.load(f)
-        print(api)  
     return api['safeLow']
 
 
@@ -166,15 +168,13 @@ def update(n_intervals):
 def update(n_intervals):
     with open('ethgasAPI.json') as f:
         api = json.load(f)
-        print(api)  
     return api['standard']
 
 @app.callback(dash.dependencies.Output('Fast', 'children'),
     [dash.dependencies.Input('interval4', 'n_intervals')])
 def update(n_intervals):
     with open('ethgasAPI.json') as f:
-        api = json.load(f)
-        print(api)  
+        api = json.load(f) 
     return api['fast']
 
 @app.callback(dash.dependencies.Output('Fastest', 'children'),
@@ -182,9 +182,17 @@ def update(n_intervals):
 def update(n_intervals):
     with open('ethgasAPI.json') as f:
         api = json.load(f)
-        print(api)  
     return api['fastest']
 
+@app.callback(dash.dependencies.Output('main-graph', 'figure'),
+    [dash.dependencies.Input('graph-update', 'n_intervals')])
+def update(n_intervals):
+    layout = go.Layout(showlegend=True, title='Day     1: BG Cal vs Current',xaxis={'title':'Current [nA]'},yaxis={'title':'BG Calibration (mg/dl)'})
+    with open('predictTable.json') as f:
+        api = json.load(f)
+    data = [{'x':[1,2,4,1,2,4,1,2,4,1,2,4], 'y':[1,2,4,1,2,4,1,2,10,14,4,4], 'type':'scatter'}]
+    fig = {'data':data, 'layout':layout}
+    return fig
 
 # Main
 if __name__ == "__main__":
