@@ -12,6 +12,9 @@ import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
+import requests
+
+
 
 # Multi-dropdown options
 from controls import COUNTIES, WELL_STATUSES, WELL_TYPES, WELL_COLORS
@@ -194,10 +197,23 @@ def update(n_intervals):
 @app.callback(dash.dependencies.Output('main-graph', 'figure'),
     [dash.dependencies.Input('graph-update', 'n_intervals')])
 def update(n_intervals):
-    layout = go.Layout(showlegend=True, title='Day     1: BG Cal vs Current',xaxis={'title':'Current [nA]'},yaxis={'title':'BG Calibration (mg/dl)'})
-    with open('predictTable.json') as f:
+    layout = go.Layout(showlegend=True,xaxis={'title':'Transaction Gas Budgets'},yaxis={'title':'Current Recommended Gas Price'})
+    with open('ethgasAPI.json') as f:
         api = json.load(f)
-    data = [{'x':[1,2,3,4,5,6,7,8,9,10,11], 'y':[1,2,4,1,1,4,1,2,0,2,4], 'type':'bar'}]
+
+        print(list(api.keys()))
+    r = requests.get("https://ethgasstation.info/json/ethgasAPI.json")
+    ethgasStation_dict = dict((k, r.json()[k]) for k in ('safeLow', 'average', 'fast', 'fastest','block_time'))
+
+    ethgasStation_dict['standard'] = ethgasStation_dict['average']
+    del ethgasStation_dict['average']
+    print(ethgasStation_dict)
+    print(list(api.keys()))
+    del api["blockNum"]
+
+
+    data = [{'x':list(api.keys()), 'y':list(api.values()), 'type':'bar'}]
+    # data = [{'x':list(ethgasStation_dict.keys()), 'y':list(ethgasStation_dict.values()), 'type':'bar'}]
     fig = {'data':data, 'layout':layout}
     return fig
 
