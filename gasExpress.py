@@ -244,6 +244,18 @@ def ml_methods(alltx, block_time, block):
 
     return results, score
 
+def make_ml_predictions_table(results):
+    # print(results)
+    df = pd.DataFrame(results, columns=['gas_price', 'blocks'])
+    print(df)
+    df = df.groupby(['blocks'], as_index=False).agg({'gas_price': 'min'})
+    print(df)
+    predictions = df
+    fastest = df['gas_price'].iget(-1)
+    fastest = df.iloc
+    return predictions 
+
+
 def master_control():
 
     def init (block):
@@ -299,9 +311,8 @@ def master_control():
             #####
             ####call these first before predictiondf because that doesn't need to be called unlese these predictions are bad
             ml_prediction_df, score = ml_methods(alltx, block_time, block)
-            print(ml_prediction_df)
             print(score)
-            make_ml_predictionTable =''
+            results = make_ml_predictions_table(ml_prediction_df)
 
             ####make the if else statment in order to choose which model to write to the user
             # df = pd.DataFrame('data', columns=['gwei',''])

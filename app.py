@@ -144,7 +144,7 @@ app.layout = html.Div(
                 html.Div(
 
                     [
-                    html.H4('History of Gas Usage in Last 200 Blocks', style={"display": "flex", "flex-direction": "column",'margin-top':'0px'}),
+                    html.H4('Comparison of Gas Price Recommendations', style={"display": "flex", "flex-direction": "column",'margin-top':'0px'}),
                     dcc.Graph(id="main-graph"),
                     dcc.Interval(id='graph-update',interval=3 * 1000, n_intervals=0)],
                     className=" pretty_container",
@@ -197,7 +197,8 @@ def update(n_intervals):
 @app.callback(dash.dependencies.Output('main-graph', 'figure'),
     [dash.dependencies.Input('graph-update', 'n_intervals')])
 def update(n_intervals):
-    layout = go.Layout(showlegend=True,xaxis={'title':'Transaction Gas Budgets'},yaxis={'title':'Current Recommended Gas Price'})
+    layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)',
+    plot_bgcolor='rgba(0,0,0,0)',showlegend=True,xaxis={'title':'Transaction Gas Budgets'},yaxis={'title':'Current Recommended Gas Price'})
     with open('ethgasAPI.json') as f:
         api = json.load(f)
 
@@ -211,11 +212,16 @@ def update(n_intervals):
     print(list(api.keys()))
     del api["blockNum"]
 
-
-    data = [{'x':list(api.keys()), 'y':list(api.values()), 'type':'bar'}]
-    # data = [{'x':list(ethgasStation_dict.keys()), 'y':list(ethgasStation_dict.values()), 'type':'bar'}]
-    fig = {'data':data, 'layout':layout}
-    return fig
+    trace1 = go.Bar(x=list(api.keys()),
+                y=list(api.values()),
+                name='Squid Predict',
+                )
+    trace2 = go.Bar(x=list(ethgasStation_dict.keys()),
+            y=list(ethgasStation_dict.values()),
+            name='Eth Gas Predict',
+            )
+    data = [trace1,trace2]
+    return go.Figure(data=data, layout=layout)
 
 # Main
 if __name__ == "__main__":
