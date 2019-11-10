@@ -1,1 +1,2 @@
-# eth_squid_station
+Squid Station - Gas Forcasting with Machine Learning
+
