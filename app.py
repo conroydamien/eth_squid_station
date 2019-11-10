@@ -86,49 +86,50 @@ app.layout = html.Div(
             className="row flex-display",
             style={"margin-bottom": "25px"},
         ),
-
-                        html.Div(
+                    html.Div(
                             [
                                 html.Div(
                                     [dcc.Interval(id='interval1', interval=3 * 1000, n_intervals=0),
-                                    html.H6(id="Block Number"), html.P("Block Number")],
+                                    html.H4(id="Block Number"), html.H6("Block Number")],
                                     id="dangerously",
                                     className="mini_container",
+                                    style={"width": "300px",'text-align':'center','font-size':'large'},
                                 ),
                                 html.Div(
                                     [dcc.Interval(id='interval2', interval=3 * 1000, n_intervals=0),
-                                    html.H6(id="Safe"), html.P("Safe")],
+                                    html.H4(id="Safe"), html.H6("Safe")],
                                     id="safe",
                                     className="mini_container",
+                                    style={"width": "300px",'text-align':'center','font-size':'large'},
                                 ),
                                 html.Div(
                                     [dcc.Interval(id='interval3', interval=3 * 1000, n_intervals=0),
-                                    html.H6(id="Standard"), html.P("Standard")],
+                                    html.H4(id="Standard"), html.H6("Standard")],
                                     id="standard",
                                     className="mini_container",
+                                    style={"width": "300px",'text-align':'center','font-size':'large'},
                                 ),
                                 html.Div(
                                     [dcc.Interval(id='interval4', interval=3 * 1000, n_intervals=0),
-                                    html.H6(id="Fast"), html.P("Fast")],
+                                    html.H4(id="Fast"), html.H6("Fast")],
                                     id="fast",
                                     className="mini_container",
+                                    style={"width": "300px",'text-align':'center','font-size':'large'},
                                 ),
                                 html.Div(
                                     [dcc.Interval(id='interval5', interval=3 * 1000, n_intervals=0),
-                                    html.H6(id="Fastest"), html.P("Fastest")],
+                                    html.H4(id="Fastest"), html.H6("Fastest")],
                                     id="fastest",
                                     className="mini_container",
+                                    style={"width": "300px",'text-align':'center','font-size':'large'},
                                 ),
-                                html.Div(
-                                    [dcc.Interval(id='interval6', interval=3 * 1000, n_intervals=0),
-                                    html.H6(id="Very Fast"), html.P("Very Fast")],
-                                    id="very fast",
-                                    className="mini_container",
-                                ),
+
                             ],
-                            id="info-container",
+                            id="",
                             className="row container-display",
+                            style={'position':'center'}
                         ),
+
 
 
         html.Div(
@@ -140,6 +141,7 @@ app.layout = html.Div(
                     dcc.Graph(id="main-graph"),
                     dcc.Interval(id='graph-update',interval=3 * 1000, n_intervals=0)],
                     className=" pretty_container",
+                    style={'text-align':'center'},
                 ),
             ],
         ),
