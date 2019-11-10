@@ -200,31 +200,49 @@ def get_gasprice_recs(prediction_table, block_time, block):
     gprecs['blockNum'] = block
     return(gprecs)
 
-def calc_expected_num_blocks(hpa):
-    
-    if hpa < 100:
-        prob =100 - hpa
-        
-        return math.log(0.05)//math.log(prob/100)
-        
-    return 1
-
-
 def ml_methods(alltx, block_time, block):
+    union = FeatureUnion([("pca", PCA(n_components=1)),
+                      ("svd", TruncatedSVD(n_components=2))])
+
+    pipe_all = Pipeline([('union', union), ('grad',GradientBoostingRegressor(n_estimators=300, learning_rate=1.0,max_depth=1, random_state=0))])
     def train_model(alltx):
+        alltx['tx_cost'] = alltx.gas * alltx.round_gp_10gwei
         X = alltx[['gas','round_gp_10gwei','tx_cost']]
+
+        # print(X.round_gp_10gwei)
         y = alltx['hashpower_accepting']
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
         pipe_all.fit(X_train,y_train)
-        return pipel_all, X_test, y_test
+        return (pipe_all, X_test, y_test)
 
     def check_model(model, X_test, y_test):
+        # print(type(X_test))
         return model.score(X_test, y_test)
 
-    model  = train_model()
-    predictions = make_model_predictions(model)
+    def make_model_predictions(model):
+        df = pd.DataFrame(columns=['gas','round_gp_10gwei','tx_cost'])
+        for i in range(0, 1000,10):
+            df.loc[i] = [21000, i, i*21000]
+        X = df[['gas','round_gp_10gwei','tx_cost']]
+        results = model.predict(X)      
+        return results
 
-    return predictions
+    def calc_expected_num_blocks(hpa):
+    
+        if hpa < 100:
+            prob =100 - hpa
+            
+            return math.log(0.05)//math.log(prob/100)
+            
+        return 1
+
+    model, X_test, y_test = train_model(alltx)
+    score = check_model(model, X_test, y_test)
+    results = make_model_predictions(model)
+
+    results = [(i,calc_expected_num_blocks(result)) for i, result in enumerate(results)]
+
+    return results, score
 
 def master_control():
 
@@ -277,8 +295,12 @@ def master_control():
 
 
             #####
-            # probs = get_ml_recs(alltx, block_time, block)
-
+            ####call these first before predictiondf because that doesn't need to be called unlese these predictions are bad
+            ml_prediction_df, score = ml_methods(alltx, block_time, block)
+            print(ml_prediction_df)
+            print(score)
+            make_ml_predictionTable =
+            df = pd.DataFrame(data, columns=['gwei',''])
             #every block, write gprecs, predictions    
             write_to_json(gprecs, predictiondf,alltx)
             return True
