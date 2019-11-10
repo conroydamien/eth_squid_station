@@ -5,7 +5,7 @@
 
 body {
   background-color: #f2f2f2;
-  margin: 5%;
+  margin: 2%;
 }
 
 .two.columns {
@@ -52,10 +52,12 @@ body {
 
 .flex-display {
   display: flex;
+  margin-top: 0px;
 }
 
 .container-display {
   display: flex;
+  margin-top: 0px;
 }
 
 #individual_graph,
@@ -77,6 +79,7 @@ body {
 
 #header {
   align-items: center;
+  margin-top:0px;
 }
 
 #learn-more-button {
@@ -91,6 +94,7 @@ body {
 }
 #title {
   text-align: center;
+
 }
 
 .mini_container {
@@ -135,6 +139,7 @@ body {
 #mainContainer {
   display: flex;
   flex-direction: column;
+  margin-top: 0px;
 }
 
 #pie_graph > div > div > svg:nth-child(3) > g.infolayer > g.legend {
