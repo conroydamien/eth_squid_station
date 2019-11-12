@@ -14,11 +14,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 import requests
 
-
-
-# Multi-dropdown options
-from controls import COUNTIES, WELL_STATUSES, WELL_TYPES, WELL_COLORS
-
 # get relative data folder
 PATH = pathlib.Path(__file__).parent
 DATA_PATH = PATH.joinpath("data").resolve()
@@ -184,7 +179,7 @@ def update(n_intervals):
     [dash.dependencies.Input('interval4', 'n_intervals')])
 def update(n_intervals):
     with open('ethgasAPI.json') as f:
-        api = json.load(f) 
+        api = json.load(f)
     return api['fast']
 
 @app.callback(dash.dependencies.Output('Fastest', 'children'),
