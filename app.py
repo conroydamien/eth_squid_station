@@ -211,10 +211,12 @@ def update(n_intervals):
     trace1 = go.Bar(x=list(api.keys()),
                 y=list(api.values()),
                 name='Squid Predict',
+                marker_color='rgb(0, 205, 233)'
                 )
     trace2 = go.Bar(x=list(ethgasStation_dict.keys()),
             y=ethgasStation,
             name='Eth Gas Predict',
+            marker_color='rgb(0, 118, 221)'
             )
     data = [trace1,trace2]
     return go.Figure(data=data, layout=layout)
