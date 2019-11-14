@@ -91,12 +91,12 @@ def write_to_json(gprecs, prediction_table,alltx):
     try:
         prediction_table['gasprice'] = prediction_table['gasprice']/10
         prediction_tableout = prediction_table.to_json(orient='records')
-        filepath_gprecs = 'ethgasAPI.json'
+        filepath_gprecs = './predictions/API.json'
         filepath_prediction_table = 'predictTable.json'
         filepath_alltx_table = 'alltx.json'
         
         with open(filepath_gprecs, 'w') as outfile:
-            json.dump(gprecs, outfile)
+            json.dump(gprecs,outfile)
 
         with open(filepath_prediction_table, 'w') as outfile:
             outfile.write(prediction_tableout)
@@ -252,14 +252,13 @@ def make_ml_predictions_table(results,block_time, block):
     fast = df[df['blocks'] < 8]['gas_price'].min() if df[df['blocks'] < 8]['gas_price'].min()!= 0 else 1
     fastest = df[df['blocks'] < 1]['gas_price'].min() if df[df['blocks'] < 2]['gas_price'].min()!= 0 else 1
     gprecs = {}
-
     ###maybe make a plot with the output being the minimum value as a function of the cutoff.  
     #Could be more informative for the end user
 
-    gprecs['safeLow'] = int(safe)
-    gprecs['standard'] = int(standard)
-    gprecs['fast'] = int(fast)
-    gprecs['fastest'] = int(fastest)
+    gprecs['safeLow'] = float(safe)
+    gprecs['standard'] = float(standard)
+    gprecs['fast'] = float(fast)
+    gprecs['fastest'] = float(fastest)
     gprecs['block_time'] = int(block_time)
     gprecs['blockNum'] = int(block)
     return gprecs
