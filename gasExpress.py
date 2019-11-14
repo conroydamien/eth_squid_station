@@ -134,7 +134,7 @@ def get_hpa(gasprice, hashpower):
         hpa = 0
     else:
         hpa = hpa.max()
-    return int(hpa)
+    return ((hpa/100) * (hpa/100))*100
 
 def analyze_last200blocks(block, blockdata):
     recent_blocks = blockdata.loc[blockdata['block_number'] > (block-200), ['mingasprice', 'block_number']]
@@ -162,10 +162,8 @@ def make_predictTable(block, alltx, hashpower, avg_timemined):
     predictTable = predictTable.sort_values('gasprice').reset_index(drop=True)
     predictTable['hashpower_accepting'] = predictTable['gasprice'].apply(get_hpa, args=(hashpower,))
     alltx['hashpower_accepting'] = alltx['round_gp_10gwei'].apply(get_hpa, args=(hashpower,))
-
+    alltx = alltx[alltx.block_mined > (alltx.block_mined.max()-200)]    
     ####do ml stuff here
-
-
     alltx.to_csv('alltx.csv')
     return(predictTable)
 
@@ -249,10 +247,10 @@ def make_ml_predictions_table(results,block_time, block):
     df = pd.DataFrame(results, columns=['gas_price', 'blocks'])
     df = df.groupby(['blocks'], as_index=False).agg({'gas_price': 'min'}).sort_values('blocks',ascending = False)
 
-    safe =df[df['blocks'] < 25]['gas_price'].min()+ 1
-    standard = df[df['blocks'] < 5]['gas_price'].min() + 1
-    fast = df[df['blocks'] < 1]['gas_price'].min()+1
-    fastest = df[df['blocks'] < 1]['gas_price'].min()+1
+    safe = df[df['blocks'] < 120]['gas_price'].min() if df[df['blocks'] < 120]['gas_price'].min()!= 0 else 1
+    standard = df[df['blocks'] < 20]['gas_price'].min() if df[df['blocks'] < 20]['gas_price'].min()!= 0 else 1
+    fast = df[df['blocks'] < 8]['gas_price'].min() if df[df['blocks'] < 8]['gas_price'].min()!= 0 else 1
+    fastest = df[df['blocks'] < 1]['gas_price'].min() if df[df['blocks'] < 2]['gas_price'].min()!= 0 else 1
     gprecs = {}
     gprecs['safeLow'] = int(safe)
     gprecs['standard'] = int(standard)
@@ -321,10 +319,6 @@ def master_control():
             print(score)
             gprecs = make_ml_predictions_table(ml_prediction_df,block_time,block)
 
-            ####make the if else statment in order to choose which model to write to the user
-            # df = pd.DataFrame('data', columns=['gwei',''])
-
-
             #every block, write gprecs, predictions    
             write_to_json(gprecs, predictiondf,alltx)
             return True
@@ -350,12 +344,4 @@ def master_control():
         time.sleep(1)
 
 master_control()
-# def loop_in_thread(loop):
-#     asyncio.set_event_loop(loop)
-#     loop.run_until_complete(master_control())
-
-
-# loop = asyncio.get_event_loop()
-# t = threading.Thread(target=loop_in_thread, args=(loop,))
-# t.start()
 
