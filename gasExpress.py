@@ -252,6 +252,10 @@ def make_ml_predictions_table(results,block_time, block):
     fast = df[df['blocks'] < 8]['gas_price'].min() if df[df['blocks'] < 8]['gas_price'].min()!= 0 else 1
     fastest = df[df['blocks'] < 1]['gas_price'].min() if df[df['blocks'] < 2]['gas_price'].min()!= 0 else 1
     gprecs = {}
+
+    ###maybe make a plot with the output being the minimum value as a function of the cutoff.  
+    #Could be more informative for the end user
+
     gprecs['safeLow'] = int(safe)
     gprecs['standard'] = int(standard)
     gprecs['fast'] = int(fast)
