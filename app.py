@@ -156,14 +156,14 @@ app.layout = html.Div(
 @app.callback(dash.dependencies.Output('Block Number', 'children'),
     [dash.dependencies.Input('interval1', 'n_intervals')])
 def update(n_intervals):
-    with open('ethgasAPI.json') as f:
+    with open('./predictions/API.json') as f:
         api = json.load(f)
     return api['blockNum']
 
 @app.callback(dash.dependencies.Output('Safe', 'children'),
     [dash.dependencies.Input('interval2', 'n_intervals')])
 def update(n_intervals):
-    with open('ethgasAPI.json') as f:
+    with open('./predictions/API.json') as f:
         api = json.load(f)
     return api['safeLow']
 
@@ -171,21 +171,21 @@ def update(n_intervals):
 @app.callback(dash.dependencies.Output('Standard', 'children'),
     [dash.dependencies.Input('interval3', 'n_intervals')])
 def update(n_intervals):
-    with open('ethgasAPI.json') as f:
+    with open('./predictions/API.json') as f:
         api = json.load(f)
     return api['standard']
 
 @app.callback(dash.dependencies.Output('Fast', 'children'),
     [dash.dependencies.Input('interval4', 'n_intervals')])
 def update(n_intervals):
-    with open('ethgasAPI.json') as f:
+    with open('./predictions/API.json') as f:
         api = json.load(f)
     return api['fast']
 
 @app.callback(dash.dependencies.Output('Fastest', 'children'),
     [dash.dependencies.Input('interval5', 'n_intervals')])
 def update(n_intervals):
-    with open('ethgasAPI.json') as f:
+    with open('./predictions/API.json') as f:
         api = json.load(f)
     return api['fastest']
 
@@ -194,7 +194,7 @@ def update(n_intervals):
 def update(n_intervals):
     layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)',
     plot_bgcolor='rgba(0,0,0,0)',showlegend=True,xaxis={'title':'Transaction Gas Budgets'},yaxis={'title':'Current Recommended Gas Price'})
-    with open('ethgasAPI.json') as f:
+    with open('./predictions/API.json') as f:
         api = json.load(f)
 
         print(list(api.keys()))
