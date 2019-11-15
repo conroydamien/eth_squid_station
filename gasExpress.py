@@ -162,7 +162,7 @@ def make_predictTable(block, alltx, hashpower, avg_timemined):
     predictTable = predictTable.sort_values('gasprice').reset_index(drop=True)
     predictTable['hashpower_accepting'] = predictTable['gasprice'].apply(get_hpa, args=(hashpower,))
     alltx['hashpower_accepting'] = alltx['round_gp_10gwei'].apply(get_hpa, args=(hashpower,))
-    alltx = alltx[alltx.block_mined > (alltx.block_mined.max()-200)]    
+    alltx = alltx[alltx.block_mined > (alltx.block_mined.max()-50)]    
     ####do ml stuff here
     alltx.to_csv('alltx.csv')
     return(predictTable)
